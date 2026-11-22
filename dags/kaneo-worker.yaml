@@ -1,0 +1,22 @@
+name: kaneo-worker
+description: Polls Kaneo for Investigate/Approved cards and runs Antigravity CLI (agy) single-flight.
+schedule: "* * * * *"
+max_active_runs: 1
+timeout_sec: 1800
+dotenv:
+  - /app/.env
+
+handler_on:
+  failure:
+    command: python3 /app/worker.py fail
+
+steps:
+  - name: reap-orphans
+    description: Move any cards stranded in Investigating/In Progress after a hard crash to Blocked.
+    command: python3 /app/worker.py reap
+
+  - name: process-next-task
+    description: Pick the next Approved or Investigate card and run agy.
+    depends:
+      - reap-orphans
+    command: python3 /app/worker.py run

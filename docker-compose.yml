@@ -1,0 +1,31 @@
+services:
+  agy-kaneo-runner:
+    build: .
+    container_name: agy-kaneo-runner
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - DAGU_AUTH_MODE=basic
+    ports:
+      # Locally exposed on localhost; on TARS bind to your Tailscale IP (e.g. 100.x.x.x:8080:8080)
+      - "127.0.0.1:8080:8080"
+    volumes:
+      - dagu_data:/var/lib/dagu/data
+      - dagu_logs:/var/lib/dagu/logs
+      - ./state/gemini:/home/runner/.gemini
+      - ./state/config:/home/runner/.config
+      - ./dags:/var/lib/dagu/dags
+      - ./config:/app/config:ro
+      - ./.env:/app/.env:ro
+      - ./worker.py:/app/worker.py:ro
+      - ./workspaces:/workspaces
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8080/api/v1/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  dagu_data:
+  dagu_logs:

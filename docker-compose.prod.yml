@@ -1,0 +1,36 @@
+services:
+  agy-kaneo-runner:
+    image: ${IMAGE_NAME:-youruser/agy-kaneo-runner:latest}
+    container_name: agy-kaneo-runner
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - DAGU_AUTH_MODE=basic
+    ports:
+      # On TARS, set DAGU_BIND_IP to TARS's Tailscale IP (100.x.x.x) in .env
+      - "${DAGU_BIND_IP:-127.0.0.1}:8080:8080"
+    volumes:
+      - dagu_data:/var/lib/dagu/data
+      - dagu_logs:/var/lib/dagu/logs
+      - ./state/gemini:/home/runner/.gemini:Z
+      - ./state/config:/home/runner/.config:Z
+      - ./.env:/app/.env:ro,Z
+      - ./config/projects.json:/app/config/projects.json:ro,Z
+      - ./workspaces:/workspaces:Z
+    mem_limit: 4g
+    cpus: 2.0
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8080/api/v1/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  dagu_data:
+  dagu_logs:

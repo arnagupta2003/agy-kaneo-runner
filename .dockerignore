@@ -1,0 +1,10 @@
+# Never bake secrets, OAuth state, or local workspaces into the Docker Hub image!
+.env
+.env.*
+!.env.example
+state/
+workspaces/
+dags/wiki/
+.git/
+__pycache__/
+*.pyc

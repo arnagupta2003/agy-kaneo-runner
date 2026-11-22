@@ -1,0 +1,13 @@
+{
+  "default": {
+    "workspace": "/workspaces/sandbox",
+    "use_worktree": false
+  },
+  "projects": {
+    "replace_with_project_id": {
+      "name": "Example Project",
+      "workspace": "/workspaces/sandbox",
+      "use_worktree": false
+    }
+  }
+}

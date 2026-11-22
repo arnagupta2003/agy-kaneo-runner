@@ -1,0 +1,6 @@
+.env
+state/
+workspaces/
+dags/wiki/
+__pycache__/
+*.pyc
